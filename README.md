@@ -1,4 +1,4 @@
-Ensure to add a config.js file with a module export of CLARIFAI_KEY that returns your API Key for Clarifai.
+Ensure to add a `config.js` file with a module export of `CLARIFAI_KEY` that returns your API Key for Clarifai.
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
