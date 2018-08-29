@@ -1,0 +1,24 @@
+.ImageSelector {
+  text-align: center;
+}
+
+.menuHead {
+  display: inline-block;
+  padding: 2vmin;
+}
+
+p {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-family: sans-serif;
+}
+
+h2 {
+  font-family: sans-serif;
+}
+
+#title {
+  text-align: center;
+}
