@@ -33,7 +33,7 @@ function conceptsToArray(concepts) {
 }
 
 function checkURL(imageURL) {
-    return(imageURL.match(/\.(jpeg|jpg|gif|png)$/) != null);
+    return(imageURL.match(/\.(jpeg|jpg|png)$/) != null);
 }
 
 function processImage(src, tagFunc) {
@@ -194,8 +194,12 @@ class TagPanel extends React.Component {
 
 class Tag extends React.Component {
   render() {
+    var tagName = this.props.name.replace(" ", "");
     return (
-      <h3>#{this.props.name}</h3>
+      <a href={"https://www.instagram.com/explore/tags/" + tagName}
+        target="_blank">
+        <h3>#{tagName}</h3>
+      </a>
     );
   }
 }
