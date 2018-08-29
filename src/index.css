@@ -49,10 +49,16 @@ p, h1, h2, h3 {
   margin: 0;
   box-sizing: border-box;
   padding: 2vmin;
+  overflow-y: scroll;
 }
 
 .tagPanel h2 {
   margin: 0;
+}
+
+.tagPanel h3 {
+  display: inline-block;
+  padding-right: 1em;
 }
 
 html, body, .app, #root {
