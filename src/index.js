@@ -34,9 +34,6 @@ function conceptsToArray(concepts) {
 }
 
 
-
-
-
 // ==================================
 
 class App extends React.Component {
