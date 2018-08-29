@@ -7,15 +7,7 @@
   padding: 2vmin;
 }
 
-p {
-  font-family: sans-serif;
-}
-
-h1 {
-  font-family: sans-serif;
-}
-
-h2 {
+p, h1, h2, h3 {
   font-family: sans-serif;
 }
 
@@ -25,14 +17,18 @@ h2 {
   padding-top: 2vh;
 }
 
+.appHeader {
+  height: 20vh;
+  border-bottom: #636363 solid 0.1vmin;
+}
+
 .imagePreview {
   width: 70vw;
   height: 80vh;
+  margin: 0;
   text-align: center;
-}
-
-.appHeader {
-  height: 20vh;
+  border-right: #636363 solid 0.1vmin;
+  display: inline-block;
 }
 
 .imagePreview img {
@@ -40,6 +36,23 @@ h2 {
   max-height: 100%;
   padding: 2vmin;
   box-sizing: border-box;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tagPanel {
+  vertical-align: top;
+  width: 29.9vw;
+  height: 80vh;
+  display: inline-block;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 2vmin;
+}
+
+.tagPanel h2 {
+  margin: 0;
 }
 
 html, body, .app, #root {

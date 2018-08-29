@@ -37,7 +37,11 @@ function checkURL(imageURL) {
 }
 
 function processImage(src) {
-  clarifaiPredict(src, (res) => console.log(conceptsToArray(res)));
+  clarifaiPredict(src,
+    (res) => {
+      console.log(conceptsToArray(res))
+    }
+  );
 }
 
 
@@ -47,13 +51,20 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageSrc:null
+      imageSrc:null,
+      tags: []
     };
     this.updateImage = this.updateImage.bind(this);
   }
 
   updateImage(src) {
     this.setState({imageSrc:src});
+  }
+
+  updateTags(newTags, append) {
+    if (!append) {
+
+    }
   }
 
   render() {
@@ -66,6 +77,7 @@ class App extends React.Component {
         <div className="imagePreview">
           <img src={this.state.imageSrc}></img>
         </div>
+        <TagPanel tags={this.state.tags}/>
       </div>
     );
   }
@@ -92,7 +104,6 @@ class ImageFile extends React.Component {
   }
 
   handleSelect(e) {
-    console.log("here");
     var fr = new FileReader();
     fr.addEventListener("load", function(e) {
       this.props.imageUpdater(e.target.result);
@@ -147,6 +158,26 @@ class ImageURL extends React.Component {
           <input type="submit" style={{display:"none"}}></input>
         </form>
       </span>
+    );
+  }
+}
+
+class TagPanel extends React.Component {
+
+  render() {
+    return (
+      <div className="tagPanel">
+        <h2 style={{textAlign:'center'}}>Tags</h2>
+        {this.props.tags.map((tag, i) => <Tag name={tag} key={i} />)}
+      </div>
+    );
+  }
+}
+
+class Tag extends React.Component {
+  render() {
+    return (
+      <h3>#{this.props.name}</h3>
     );
   }
 }
