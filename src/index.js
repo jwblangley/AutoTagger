@@ -4,13 +4,12 @@ import './index.css';
 
 const config = require('./config')
 
-
-// Clarifai header
 const Clarifai = require('clarifai');
 
 const app = new Clarifai.App({
  apiKey: config.CLARIFAI_KEY()
 });
+
 
 function clarifaiPredict(src, resFunc) {
   var conceptJSON;
@@ -33,6 +32,14 @@ function conceptsToArray(concepts) {
   return conArr;
 }
 
+function checkURL(imageURL) {
+    return(imageURL.match(/\.(jpeg|jpg|gif|png)$/) != null);
+}
+
+function processImage(src) {
+  clarifaiPredict(src, (res) => console.log(conceptsToArray(res)));
+}
+
 
 // ==================================
 
@@ -42,6 +49,7 @@ class App extends React.Component {
     this.state = {
       imageSrc:null
     };
+    this.updateImage = this.updateImage.bind(this);
   }
 
   updateImage(src) {
@@ -51,9 +59,13 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <h1 id="title">Auto-tagger</h1>
-        <ImageSelector imageUpdater={this.updateImage}/>
-        <img id="img" src={this.state.imageSrc}></img>
+        <div className="appHeader">
+          <h1 id="title">Auto-tagger</h1>
+          <ImageSelector imageUpdater={this.updateImage}/>
+        </div>
+        <div className="imagePreview">
+          <img src={this.state.imageSrc}></img>
+        </div>
       </div>
     );
   }
@@ -73,11 +85,31 @@ class ImageSelector extends React.Component {
 }
 
 class ImageFile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.fileInput = React.createRef();
+  }
+
+  handleSelect(e) {
+    console.log("here");
+    var fr = new FileReader();
+    fr.addEventListener("load", function(e) {
+      this.props.imageUpdater(e.target.result);
+      var b64 = e.target.result.split(',')[1];
+      processImage({base64:b64});
+    }.bind(this));
+
+    fr.readAsDataURL(this.fileInput.current.files[0]);
+
+    e.preventDefault();
+  }
+
   render() {
     return (
       <span>
-        <h2 className="menuHead">{this.props.header}</h2>
-        <input type='file' onChange={()=>this.props.imageUpdater()}></input>
+        <h2 className="menuHeading">{this.props.header}</h2>
+        <input type='file' onChange={this.handleSelect} ref={this.fileInput}></input>
       </span>
     );
   }
@@ -98,14 +130,18 @@ class ImageURL extends React.Component {
   }
 
   handleSubmit(e) {
-    // TODO
+    var imageURL = this.state.value;
+    if (checkURL(imageURL)){
+      this.props.imageUpdater(this.state.value);
+      processImage(imageURL);
+    }
     e.preventDefault();
   }
 
   render() {
     return (
       <span>
-      <h2 className="menuHead">{this.props.header}</h2>
+      <h2 className="menuHeading">{this.props.header}</h2>
         <form onSubmit={this.handleSubmit} style={{display:"inline-block"}}>
           <input type="text" value={this.state.value} onChange={this.handleChange}></input>
           <input type="submit" style={{display:"none"}}></input>
@@ -121,28 +157,5 @@ ReactDOM.render(
   <App />,
   document.getElementById('root')
 );
-
-
-
-function readFile() {
-
-  if (this.files && this.files[0]) {
-
-    var FR= new FileReader();
-
-    FR.addEventListener("load", function(e) {
-      document.getElementById("img").src       = e.target.result;
-      var b64 = e.target.result.split(',')[1];
-      var res = clarifaiPredict(
-        {base64:b64},
-        (res) => {console.log(conceptsToArray(res))}
-      );
-      console.log(res);
-    });
-
-    FR.readAsDataURL( this.files[0] );
-  }
-
-}
 
 // document.getElementById("inp").addEventListener("change", readFile);

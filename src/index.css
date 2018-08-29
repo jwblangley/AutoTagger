@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.menuHead {
+.menuHeading {
   display: inline-block;
   padding: 2vmin;
 }
@@ -21,4 +21,30 @@ h2 {
 
 #title {
   text-align: center;
+  margin: 0;
+  padding-top: 2vh;
+}
+
+.imagePreview {
+  width: 70vw;
+  height: 80vh;
+  text-align: center;
+}
+
+.appHeader {
+  height: 20vh;
+}
+
+.imagePreview img {
+  max-width: 100%;
+  max-height: 100%;
+  padding: 2vmin;
+  box-sizing: border-box;
+}
+
+html, body, .app, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
