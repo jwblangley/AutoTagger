@@ -128,7 +128,10 @@ class ImageFile extends React.Component {
     return (
       <span>
         <h2 className="menuHeading">{this.props.header}</h2>
-        <input type='file' onChange={this.handleSelect} ref={this.fileInput}></input>
+        <input
+          type='file'
+          onChange={this.handleSelect}
+          ref={this.fileInput}></input>
       </span>
     );
   }
@@ -162,8 +165,15 @@ class ImageURL extends React.Component {
       <span>
       <h2 className="menuHeading">{this.props.header}</h2>
         <form onSubmit={this.handleSubmit} style={{display:"inline-block"}}>
-          <input type="text" value={this.state.value} onChange={this.handleChange}></input>
-          <input type="submit" style={{display:"none"}}></input>
+          <input
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange}>
+          </input>
+          <input
+            type="submit"
+            style={{display:"none"}}>
+          </input>
         </form>
       </span>
     );
@@ -196,5 +206,3 @@ ReactDOM.render(
   <App />,
   document.getElementById('root')
 );
-
-// document.getElementById("inp").addEventListener("change", readFile);
