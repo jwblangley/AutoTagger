@@ -1,12 +1,15 @@
+module.exports.generateColors = generateColors;
 
 function randBetween(i, j) {
   //Pre: i < j
   return Math.floor((Math.random() * (j - i)) + i);
 }
 
+const GREY_CONTROL = 0.05;
 
-function generateColors(imageSrc) {
-  getImg(imageSrc, (img) => pickColorsFromImage(img, 3));
+
+function generateColors(imageSrc, numToGen, colFunc) {
+  getImg(imageSrc, (img) => pickColorsFromImage(img, 3, numToGen, colFunc));
 }
 
 function getImg(imageSrc, imgFunc) {
@@ -17,7 +20,7 @@ function getImg(imageSrc, imgFunc) {
   img.onload = () => imgFunc(img);
 }
 
-function pickColorsFromImage(img, numCols) {
+function pickColorsFromImage(img, numToPick, numToGen, colFunc) {
   const borderRemoval = 0.1;
 
   var canvas = document.createElement('canvas');
@@ -26,7 +29,7 @@ function pickColorsFromImage(img, numCols) {
   canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
 
   var cols = [];
-  for (var i = 0; i < numCols; i++) {
+  for (var i = 0; i < numToPick; i++) {
     var x = randBetween(borderRemoval * img.width,
       img.width - (borderRemoval * img.width));
     var y = randBetween(borderRemoval * img.height,
@@ -34,7 +37,8 @@ function pickColorsFromImage(img, numCols) {
     cols[i] = canvas.getContext('2d')
       .getImageData(x, y, 1, 1).data;
   }
-  console.log(triadMixing(cols, 10, 0.2));
+
+  colFunc(triadMixing(cols, numToGen, GREY_CONTROL));
 }
 // Inspired by
 // http://devmag.org.za/2012/07/29/how-to-choose-colours-procedurally-algorithms
@@ -68,9 +72,3 @@ function triadMixing(inputCols, numOutputs, greyControl) {
 
   return outCols;
 }
-
-
-
-
-
-module.exports.generateColors = generateColors;

@@ -53,14 +53,16 @@ class App extends React.Component {
     super(props);
     this.state = {
       imageSrc:null,
-      tags: []
+      tags: [],
+      tagCols: [[0,0,0]]
     };
     this.updateImage = this.updateImage.bind(this);
     this.updateTags = this.updateTags.bind(this);
   }
 
   updateImage(src) {
-    colorTools.generateColors(src);
+    //TODO generate the right number of colors
+    colorTools.generateColors(src, 5, (cs) => this.setState({tagCols:cs}));
     this.setState({imageSrc:src});
   }
 
@@ -85,22 +87,34 @@ class App extends React.Component {
         <div className="imagePreview">
           <img src={this.state.imageSrc}></img>
         </div>
-        <TagPanel tags={this.state.tags}/>
+        <TagPanel tags={this.state.tags} cols={this.state.tagCols}/>
       </div>
     );
   }
 }
 
 class ImageSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.fileInputChild = React.createRef();
+  }
+
+  resetFileInputVal() {
+    console.log("Here");
+    //this.fileInputChild.current().resetFileInputVal();
+  }
+
   render() {
     return (
       <div className="ImageSelector">
         <ImageFile header = "Choose an Image"
           imageUpdater={this.props.imageUpdater}
-          tagUpdater={this.props.tagUpdater}/>
+          tagUpdater={this.props.tagUpdater}
+          ref={this.fileInputChild}/>
         <ImageURL header = "Enter an Image URL"
           imageUpdater={this.props.imageUpdater}
-          tagUpdater={this.props.tagUpdater}/>
+          tagUpdater={this.props.tagUpdater}
+          fileInputResetter={this.props.resetFileInputVal}/>
       </div>
     );
   }
@@ -110,7 +124,12 @@ class ImageFile extends React.Component {
   constructor(props) {
     super(props);
     this.handleSelect = this.handleSelect.bind(this);
+    this.resetFileInputVal = this.resetFileInputVal.bind(this);
     this.fileInput = React.createRef();
+  }
+
+  resetFileInputVal() {
+    this.fileInput.current.value = null;
   }
 
   handleSelect(e) {
@@ -126,7 +145,6 @@ class ImageFile extends React.Component {
     } else {
       console.log("No Image Selected");
     }
-
     e.preventDefault();
   }
 
@@ -160,6 +178,7 @@ class ImageURL extends React.Component {
   handleSubmit(e) {
     var imageURL = this.state.value;
     if (checkURL(imageURL)){
+      this.props.fileInputResetter();
       this.props.imageUpdater(this.state.value + '?' + new Date().getTime());
       processImage(imageURL, this.props.tagUpdater);
     }
@@ -192,7 +211,13 @@ class TagPanel extends React.Component {
     return (
       <div className="tagPanel">
         <h2 style={{textAlign:'center'}}>Tags</h2>
-        {this.props.tags.map((tag, i) => <Tag name={tag} key={i} />)}
+        {this.props.tags.map(
+          (tag, i) => <Tag
+            name={tag}
+            key={i}
+            col={this.props.cols[i % this.props.cols.length]}
+          />
+        )}
       </div>
     );
   }
@@ -203,7 +228,12 @@ class Tag extends React.Component {
     var tagName = this.props.name.replace(" ", "");
     return (
       <a href={"https://www.instagram.com/explore/tags/" + tagName}
-        target="_blank">
+        target="_blank"
+        style={{color:
+          'rgb(' + this.props.col[0] + ','
+          + this.props.col[1] + ','
+          + this.props.col[2] + ')'
+        }}>
         <h3>#{tagName}</h3>
       </a>
     );
