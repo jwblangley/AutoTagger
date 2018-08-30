@@ -5,6 +5,9 @@ import PixelColor from 'react-native-pixel-color';
 PixelColor.getHex(imageUriOrData, { x, y }).then((color) => {
   // #000000
 }).catch((err) => {
-  // Oops, something went wrong. Check that the filename is correct and
-  // inspect err to get more details.
+  console.log("Error getting pixel colour\n" + err);
 });
+
+function pickColors(image) {
+
+}
