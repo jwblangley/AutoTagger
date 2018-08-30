@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const config = require('./config')
+const config = require('./config');
+const colorTools = require('./colorTools');
 
 const Clarifai = require('clarifai');
 
@@ -59,6 +60,7 @@ class App extends React.Component {
   }
 
   updateImage(src) {
+    colorTools.generateColors(src);
     this.setState({imageSrc:src});
   }
 
@@ -112,14 +114,18 @@ class ImageFile extends React.Component {
   }
 
   handleSelect(e) {
-    var fr = new FileReader();
-    fr.addEventListener("load", function(e) {
-      this.props.imageUpdater(e.target.result);
-      var b64 = e.target.result.split(',')[1];
-      processImage({base64:b64}, this.props.tagUpdater);
-    }.bind(this));
+    if (this.fileInput.current.files && this.fileInput.current.files[0]){
+      var fr = new FileReader();
+      fr.addEventListener("load", function(e) {
+        this.props.imageUpdater(e.target.result);
+        var b64 = e.target.result.split(',')[1];
+        processImage({base64:b64}, this.props.tagUpdater);
+      }.bind(this));
 
-    fr.readAsDataURL(this.fileInput.current.files[0]);
+      fr.readAsDataURL(this.fileInput.current.files[0]);
+    } else {
+      console.log("No Image Selected");
+    }
 
     e.preventDefault();
   }
@@ -154,7 +160,7 @@ class ImageURL extends React.Component {
   handleSubmit(e) {
     var imageURL = this.state.value;
     if (checkURL(imageURL)){
-      this.props.imageUpdater(this.state.value);
+      this.props.imageUpdater(this.state.value + '?' + new Date().getTime());
       processImage(imageURL, this.props.tagUpdater);
     }
     e.preventDefault();
