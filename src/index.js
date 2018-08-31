@@ -46,12 +46,11 @@ class App extends React.Component {
     this.state = {
       imageSrc:null,
       tags: [],
+      tagMap: new Map(),
       tagCols: [[0,0,0]]
     };
     this.updateImage = this.updateImage.bind(this);
     this.processImage = this.processImage.bind(this);
-
-    instagramCrawler.getTagPopularity("Dog", console.log);
   }
 
   updateImage(src) {
@@ -59,18 +58,16 @@ class App extends React.Component {
   }
 
   updateTags(newTags, append) {
-    var newTagMap = new Map(newTags.map(
-      tag => [tag, instagramCrawler.getTagPopularity])
-    );
-    console.log(newTagMap);
-
-    // TODO: Order new tags
-    // if (!append) {
-    //   tags = newTags
-    // }else {
-    //   var oldTags = this.state.tags.slice();
-    //   tags =  oldTags.concat(newTags)
-    // }
+    var newTagMap = new Map();
+    //TODO remove spaces from tags
+    for (var i = 0; i < newTags.length; i++) {
+      instagramCrawler.getTagPopularity(newTags[i].replace(" ", ""),
+        (tag, num) => {
+          newTagMap.set(tag, num);
+        }
+      );
+    }
+    setTimeout(function(){console.log(newTagMap)}, 5000);
 
   }
 
