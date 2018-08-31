@@ -49,7 +49,7 @@ class App extends React.Component {
       tagCols: [[0,0,0]]
     };
     this.updateImage = this.updateImage.bind(this);
-    this.updateTags = this.updateTags.bind(this);
+    this.processImage = this.processImage.bind(this);
 
     instagramCrawler.getTagPopularity("Dog", console.log);
   }
@@ -67,7 +67,7 @@ class App extends React.Component {
     }
   }
 
-  function processImage(src, tagFunc) {
+  processImage(src, tagFunc) {
     // Clarifai requires base64 image data as an image object
     var imageToSend;
     if (src.startsWith("data:image")){
@@ -81,7 +81,7 @@ class App extends React.Component {
 
     clarifaiPredict(imageToSend,
       (APIres) => {
-        tagFunc(conceptsToArray(APIres), false);
+        this.updateTags(conceptsToArray(APIres), false);
       }
     );
 
@@ -96,7 +96,7 @@ class App extends React.Component {
           <h1 id="title">Auto-tagger</h1>
           <ImageSelector
             imageUpdater={this.updateImage}
-            tagUpdater={this.updateTags}/>
+            imageProcessor={this.processImage}/>
         </div>
         <div className="imagePreview">
           <img src={this.state.imageSrc}></img>
@@ -123,11 +123,11 @@ class ImageSelector extends React.Component {
       <div className="ImageSelector">
         <ImageFile header = "Choose an Image"
           imageUpdater={this.props.imageUpdater}
-          tagUpdater={this.props.tagUpdater}
+          imageProcessor={this.props.imageProcessor}
           ref={this.fileInputChild}/>
         <ImageURL header = "Enter an Image URL"
           imageUpdater={this.props.imageUpdater}
-          tagUpdater={this.props.tagUpdater}
+          imageProcessor={this.props.imageProcessor}
           fileInputResetter={this.resetFileInputVal}/>
       </div>
     );
@@ -151,7 +151,7 @@ class ImageFile extends React.Component {
       var fr = new FileReader();
       fr.addEventListener("load", function(e) {
         this.props.imageUpdater(e.target.result);
-        processImage(e.target.result, this.props.tagUpdater);
+        this.props.imageProcessor(e.target.result, this.props.tagUpdater);
       }.bind(this));
 
       fr.readAsDataURL(this.fileInput.current.files[0]);
@@ -193,7 +193,7 @@ class ImageURL extends React.Component {
     if (checkURL(imageURL)){
       this.props.fileInputResetter();
       this.props.imageUpdater(this.state.value + '?' + new Date().getTime());
-      processImage(imageURL, this.props.tagUpdater);
+      this.props.imageProcessor(imageURL, this.props.tagUpdater);
     }
     e.preventDefault();
   }
