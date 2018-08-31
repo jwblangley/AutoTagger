@@ -58,17 +58,21 @@ class App extends React.Component {
   }
 
   updateTags(newTags, append) {
-    var newTagMap = new Map();
-    //TODO remove spaces from tags
+    if (!append) {
+      // Clear tagMap
+      this.setState({tagMap:new Map()});
+    }
+
     for (var i = 0; i < newTags.length; i++) {
       instagramCrawler.getTagPopularity(newTags[i].replace(" ", ""),
         (tag, num) => {
+          var newTagMap = new Map();
           newTagMap.set(tag, num);
+          var oldTagMap = new Map(this.state.tagMap);
+          this.setState({tagMap: new Map(oldTagMap, newTagMap)})
         }
       );
     }
-    setTimeout(function(){console.log(newTagMap)}, 5000);
-
   }
 
   processImage(src, tagFunc) {
@@ -95,6 +99,7 @@ class App extends React.Component {
   }
 
   render() {
+    // TODO: sort tag map into state.tags
     return (
       <div className="app">
         <div className="appHeader">
