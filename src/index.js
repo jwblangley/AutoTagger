@@ -59,34 +59,42 @@ class App extends React.Component {
   }
 
   updateTags(newTags, append) {
-    if (!append) {
-      this.setState({tags:newTags})
-    }else {
-      var oldTags = this.state.tags.slice();
-      this.setState({tags: oldTags.concat(newTags)})
-    }
+    var newTagMap = new Map(newTags.map(
+      tag => [tag, instagramCrawler.getTagPopularity])
+    );
+    console.log(newTagMap);
+
+    // TODO: Order new tags
+    // if (!append) {
+    //   tags = newTags
+    // }else {
+    //   var oldTags = this.state.tags.slice();
+    //   tags =  oldTags.concat(newTags)
+    // }
+
   }
 
   processImage(src, tagFunc) {
+    // Remove all current tags before processing new image
+    this.updateTags([], false);
     // Clarifai requires base64 image data as an image object
     var imageToSend;
     if (src.startsWith("data:image")){
-      console.log("Here");
       var b64 = src.split(',')[1];
       imageToSend = {base64:b64};
     } else {
-      //URL
+      // URL
       imageToSend = src;
     }
 
     clarifaiPredict(imageToSend,
       (APIres) => {
         this.updateTags(conceptsToArray(APIres), false);
+        colorTools.generateColors(src, this.state.tags.length,
+          (cs) => this.setState({tagCols:cs}));
       }
     );
 
-    //TODO generate the right number of colors
-    colorTools.generateColors(src, 5, (cs) => this.setState({tagCols:cs}));
   }
 
   render() {
@@ -99,7 +107,7 @@ class App extends React.Component {
             imageProcessor={this.processImage}/>
         </div>
         <div className="imagePreview">
-          <img src={this.state.imageSrc}></img>
+          <img src={this.state.imageSrc} alt=""></img>
         </div>
         <TagPanel tags={this.state.tags} cols={this.state.tagCols}/>
       </div>
@@ -201,7 +209,7 @@ class ImageURL extends React.Component {
   render() {
     return (
       <span>
-      <h2 className="menuHeading">{this.props.header}</h2>
+        <h2 className="menuHeading">{this.props.header}</h2>
         <form onSubmit={this.handleSubmit} style={{display:"inline-block"}}>
           <input
             type="text"
@@ -213,6 +221,7 @@ class ImageURL extends React.Component {
             style={{display:"none"}}>
           </input>
         </form>
+        <small> (Experimental)</small>
       </span>
     );
   }

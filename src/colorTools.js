@@ -34,8 +34,7 @@ function pickColorsFromImage(img, numToPick, numToGen, colFunc) {
       img.width - (borderRemoval * img.width));
     var y = randBetween(borderRemoval * img.height,
       img.height - (borderRemoval * img.height));
-    cols[i] = canvas.getContext('2d')
-      .getImageData(x, y, 1, 1).data;
+    cols[i] = canvas.getContext('2d').getImageData(x, y, 1, 1).data;
   }
 
   colFunc(triadMixing(cols, numToGen, GREY_CONTROL));
