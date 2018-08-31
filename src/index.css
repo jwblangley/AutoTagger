@@ -38,6 +38,9 @@ a {
 .imagePreview img {
   max-width: 100%;
   max-height: 100%;
+  min-width: 50%;
+  min-height: 50%;
+  /* Will stretch images with more than a 2:1 aspect ratio */
   padding: 2vmin;
   box-sizing: border-box;
   position: relative;
