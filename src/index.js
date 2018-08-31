@@ -97,11 +97,11 @@ class ImageSelector extends React.Component {
   constructor(props) {
     super(props);
     this.fileInputChild = React.createRef();
+    this.resetFileInputVal = this.resetFileInputVal.bind(this);
   }
 
   resetFileInputVal() {
-    console.log("Here");
-    //this.fileInputChild.current().resetFileInputVal();
+    this.fileInputChild.current.resetFileInputVal();
   }
 
   render() {
@@ -114,7 +114,7 @@ class ImageSelector extends React.Component {
         <ImageURL header = "Enter an Image URL"
           imageUpdater={this.props.imageUpdater}
           tagUpdater={this.props.tagUpdater}
-          fileInputResetter={this.props.resetFileInputVal}/>
+          fileInputResetter={this.resetFileInputVal}/>
       </div>
     );
   }
