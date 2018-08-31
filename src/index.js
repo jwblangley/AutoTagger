@@ -4,6 +4,7 @@ import './index.css';
 
 const config = require('./config');
 const colorTools = require('./colorTools');
+const instagramCrawler = require('./instagramCrawler');
 
 const Clarifai = require('clarifai');
 
@@ -37,15 +38,6 @@ function checkURL(imageURL) {
     return(imageURL.match(/\.(jpeg|jpg|png)$/) != null);
 }
 
-function processImage(src, tagFunc) {
-  clarifaiPredict(src,
-    (APIres) => {
-      tagFunc(conceptsToArray(APIres), false);
-    }
-  );
-}
-
-
 // ==================================
 
 class App extends React.Component {
@@ -58,11 +50,11 @@ class App extends React.Component {
     };
     this.updateImage = this.updateImage.bind(this);
     this.updateTags = this.updateTags.bind(this);
+
+    instagramCrawler.getTagPopularity("Dog", console.log);
   }
 
   updateImage(src) {
-    //TODO generate the right number of colors
-    colorTools.generateColors(src, 5, (cs) => this.setState({tagCols:cs}));
     this.setState({imageSrc:src});
   }
 
@@ -73,6 +65,28 @@ class App extends React.Component {
       var oldTags = this.state.tags.slice();
       this.setState({tags: oldTags.concat(newTags)})
     }
+  }
+
+  function processImage(src, tagFunc) {
+    // Clarifai requires base64 image data as an image object
+    var imageToSend;
+    if (src.startsWith("data:image")){
+      console.log("Here");
+      var b64 = src.split(',')[1];
+      imageToSend = {base64:b64};
+    } else {
+      //URL
+      imageToSend = src;
+    }
+
+    clarifaiPredict(imageToSend,
+      (APIres) => {
+        tagFunc(conceptsToArray(APIres), false);
+      }
+    );
+
+    //TODO generate the right number of colors
+    colorTools.generateColors(src, 5, (cs) => this.setState({tagCols:cs}));
   }
 
   render() {
@@ -137,8 +151,7 @@ class ImageFile extends React.Component {
       var fr = new FileReader();
       fr.addEventListener("load", function(e) {
         this.props.imageUpdater(e.target.result);
-        var b64 = e.target.result.split(',')[1];
-        processImage({base64:b64}, this.props.tagUpdater);
+        processImage(e.target.result, this.props.tagUpdater);
       }.bind(this));
 
       fr.readAsDataURL(this.fileInput.current.files[0]);
