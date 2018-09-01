@@ -69,9 +69,21 @@ class App extends React.Component {
           var newTagMap = new Map(this.state.tagMap);
           newTagMap.set(tag, num);
           this.setState({tagMap: newTagMap});
+          this.tagMapToSortedArray(newTagMap);
         }
       );
     }
+  }
+
+  tagMapToSortedArray(tagMap) {
+    // TODO: sort tag map into state.tags
+    // var tagMapArray = Array.from(tagMap);
+    // tagMapArray.sort(function (a, b) {
+    //   return b[1] - a[1];
+    // });
+    // var tagArray = tagMapArray.map(x => x[0]);
+    // this.setState({tags:tagArray});
+    console.log(tagMap);
   }
 
   processImage(src, tagFunc) {
@@ -92,7 +104,7 @@ class App extends React.Component {
       (APIres) => {
         var tagArray = conceptsToArray(APIres);
         this.updateTags(tagArray, false);
-        colorTools.generateColors(src, tagArray.length,
+        colorTools.generateColors(src, tagArray,
           (cs) => this.setState({tagCols:cs}));
       }
     );
@@ -100,12 +112,6 @@ class App extends React.Component {
   }
 
   render() {
-    // TODO: sort tag map into state.tags
-    var tagMapArray = Array.from(this.state.tagMap);
-    tagMapArray.sort(function (a, b) {
-      return b[1] - a[1];
-    });
-    console.log(tagMapArray);
 
     return (
       <div className="app">
