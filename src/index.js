@@ -66,10 +66,9 @@ class App extends React.Component {
     for (var i = 0; i < newTags.length; i++) {
       instagramCrawler.getTagPopularity(newTags[i].replace(" ", ""),
         (tag, num) => {
-          var newTagMap = new Map();
+          var newTagMap = new Map(this.state.tagMap);
           newTagMap.set(tag, num);
-          var oldTagMap = new Map(this.state.tagMap);
-          this.setState({tagMap: new Map(oldTagMap, newTagMap)})
+          this.setState({tagMap: newTagMap});
         }
       );
     }
@@ -78,6 +77,7 @@ class App extends React.Component {
   processImage(src, tagFunc) {
     // Remove all current tags before processing new image
     this.updateTags([], false);
+
     // Clarifai requires base64 image data as an image object
     var imageToSend;
     if (src.startsWith("data:image")){
@@ -90,8 +90,9 @@ class App extends React.Component {
 
     clarifaiPredict(imageToSend,
       (APIres) => {
-        this.updateTags(conceptsToArray(APIres), false);
-        colorTools.generateColors(src, this.state.tags.length,
+        var tagArray = conceptsToArray(APIres);
+        this.updateTags(tagArray, false);
+        colorTools.generateColors(src, tagArray.length,
           (cs) => this.setState({tagCols:cs}));
       }
     );
@@ -100,6 +101,12 @@ class App extends React.Component {
 
   render() {
     // TODO: sort tag map into state.tags
+    var tagMapArray = Array.from(this.state.tagMap);
+    tagMapArray.sort(function (a, b) {
+      return b[1] - a[1];
+    });
+    console.log(tagMapArray);
+
     return (
       <div className="app">
         <div className="appHeader">
