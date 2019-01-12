@@ -4,7 +4,7 @@ import './index.css';
 
 const config = require('./config');
 const colorTools = require('./colorTools');
-const instagramCrawler = require('./instagramCrawler');
+const popularity = require('./popularity');
 
 const Clarifai = require('clarifai');
 
@@ -64,7 +64,7 @@ class App extends React.Component {
     }
 
     for (var i = 0; i < newTags.length; i++) {
-      instagramCrawler.getTagPopularity(newTags[i].replace(" ", ""),
+      popularity.getTagPopularity(newTags[i].replace(" ", ""),
         (tag, num) => {
           var newTagMap = new Map(this.state.tagMap);
           newTagMap.set(tag, num);
